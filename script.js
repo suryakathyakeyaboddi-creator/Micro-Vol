@@ -683,3 +683,145 @@ if (typeof module !== 'undefined' && module.exports) {
     updateProgress
   };
 }
+
+// ===================================
+// REPORT ISSUE FUNCTIONALITY
+// ===================================
+
+let reportModalStartTime = null;
+let reportTimerInterval = null;
+
+function openReportIssueModal() {
+  const modal = document.getElementById('reportIssueModal');
+  if (!modal) return;
+  
+  // Reset form
+  document.getElementById('reportForm').reset();
+  updateCharCount('issueTitle', 'titleCharCount');
+  updateCharCount('issueDescription', 'descCharCount');
+  
+  // Start timer
+  reportModalStartTime = Date.now();
+  startReportTimer();
+  
+  // Show modal
+  modal.classList.add('show');
+  
+  // Focus first input
+  setTimeout(() => {
+    document.getElementById('issueTitle')?.focus();
+  }, 300);
+}
+
+function closeReportIssueModal() {
+  const modal = document.getElementById('reportIssueModal');
+  if (!modal) return;
+  
+  // Stop timer
+  stopReportTimer();
+  
+  // Hide modal
+  modal.classList.remove('show');
+}
+
+function startReportTimer() {
+  const timerEl = document.getElementById('sessionTimer');
+  if (!timerEl) return;
+  
+  reportTimerInterval = setInterval(() => {
+    const elapsed = Date.now() - reportModalStartTime;
+    const seconds = Math.floor(elapsed / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    const formattedTime = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    timerEl.textContent = formattedTime;
+  }, 100);
+}
+
+function stopReportTimer() {
+  if (reportTimerInterval) {
+    clearInterval(reportTimerInterval);
+    reportTimerInterval = null;
+  }
+}
+
+function submitReport(event) {
+  event.preventDefault();
+  
+  const title = document.getElementById('issueTitle').value;
+  const description = document.getElementById('issueDescription').value;
+  const sessionTime = document.getElementById('sessionTimer').textContent;
+  
+  // Log report (in production, this would send to server)
+  console.log('%c📝 Report Submitted', 'font-size: 16px; font-weight: bold; color: #F7B801;');
+  console.log('Title:', title);
+  console.log('Description:', description);
+  console.log('Session Time:', sessionTime);
+  console.log('Timestamp:', new Date().toISOString());
+  
+  // Close modal
+  closeReportIssueModal();
+  
+  // Show success toast
+  showReportSuccessToast();
+  
+  // Create confetti
+  createConfetti();
+}
+
+function showReportSuccessToast() {
+  const toast = document.getElementById('reportSuccessToast');
+  if (!toast) return;
+  
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 4000);
+}
+
+// Character count functionality
+function updateCharCount(inputId, counterId) {
+  const input = document.getElementById(inputId);
+  const counter = document.getElementById(counterId);
+  
+  if (!input || !counter) return;
+  
+  counter.textContent = input.value.length;
+}
+
+// Setup character counters
+document.addEventListener('DOMContentLoaded', () => {
+  const titleInput = document.getElementById('issueTitle');
+  const descInput = document.getElementById('issueDescription');
+  
+  if (titleInput) {
+    titleInput.addEventListener('input', () => {
+      updateCharCount('issueTitle', 'titleCharCount');
+    });
+  }
+  
+  if (descInput) {
+    descInput.addEventListener('input', () => {
+      updateCharCount('issueDescription', 'descCharCount');
+    });
+  }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const reportModal = document.getElementById('reportIssueModal');
+    if (reportModal && reportModal.classList.contains('show')) {
+      closeReportIssueModal();
+    }
+  }
+});
+
+// Close modal on backdrop click
+document.getElementById('reportIssueModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'reportIssueModal') {
+    closeReportIssueModal();
+  }
+});
