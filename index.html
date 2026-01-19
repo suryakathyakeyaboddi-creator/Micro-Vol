@@ -74,10 +74,17 @@
                 <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </button>
-            <div class="live-indicator">
-              <span class="pulse-dot"></span>
-              <span id="activeUsers">3</span> volunteers active now
-            </div>
+            <button class="cta-button cta-secondary" onclick="openReportIssueModal()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 2L2 18h16L10 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 8v4M10 14v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Report Issue</span>
+            </button>
+          </div>
+          <div class="live-indicator">
+            <span class="pulse-dot"></span>
+            <span id="activeUsers">3</span> volunteers active now
           </div>
         </div>
 
@@ -175,6 +182,98 @@
     </div>
   </section>
 
+  <!-- Report Issue Modal -->
+  <div class="modal-overlay" id="reportIssueModal">
+    <div class="modal-box report-modal">
+      <div class="modal-header">
+        <div class="modal-icon-header">
+          <div class="report-icon-wrapper">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M14 4L4 24h20L14 4z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 10v6M14 18v.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="modal-header-text">
+            <h2 class="modal-title">Report an Issue</h2>
+            <p class="modal-subtitle-small">Help us improve by reporting problems</p>
+          </div>
+        </div>
+        <button class="close-modal-btn" onclick="closeReportIssueModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Timer Display -->
+      <div class="timer-display">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 3v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Session time: <strong id="sessionTimer">00:00</strong></span>
+      </div>
+
+      <!-- Report Form -->
+      <form class="report-form" id="reportForm" onsubmit="submitReport(event)">
+        <div class="form-group">
+          <label for="issueTitle" class="form-label">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 4h12M2 8h8M2 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Issue Title
+            <span class="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="issueTitle" 
+            class="form-input" 
+            placeholder="Brief summary of the issue"
+            required
+            maxlength="100"
+          />
+          <div class="char-counter">
+            <span id="titleCharCount">0</span>/100 characters
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="issueDescription" class="form-label">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Description
+            <span class="required">*</span>
+          </label>
+          <textarea 
+            id="issueDescription" 
+            class="form-textarea" 
+            rows="6" 
+            placeholder="Please provide detailed information about the issue, including steps to reproduce if applicable..."
+            required
+            maxlength="500"
+          ></textarea>
+          <div class="char-counter">
+            <span id="descCharCount">0</span>/500 characters
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary-modal" onclick="closeReportIssueModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M2 10l6 6 10-12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Submit Report</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Success Toast -->
   <div class="success-toast" id="successToast">
     <div class="toast-icon-wrapper">
@@ -186,6 +285,20 @@
     <div class="toast-text">
       <strong>Amazing! 🎉</strong>
       <span>You just made a real difference</span>
+    </div>
+  </div>
+
+  <!-- Report Success Toast -->
+  <div class="success-toast report-toast" id="reportSuccessToast">
+    <div class="toast-icon-wrapper">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+        <path d="M8 12l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="toast-text">
+      <strong>Report Submitted! ✓</strong>
+      <span>Thank you for helping us improve</span>
     </div>
   </div>
 
